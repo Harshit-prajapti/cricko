@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Crown, Star, Vault } from "lucide-react";
 import { CheckCircle2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Images from "@/app/Images";
@@ -25,6 +26,9 @@ const playerColors = [
 ];
 
 const TeamRegistrationForm = () => {
+  const searchParams = useSearchParams()
+  const tournamentId = searchParams.get("tournamentId")
+  console.log("This is the tournament Id : ",tournamentId)
   const [players, setPlayers] = useState(
     Array.from({ length: 11 }, () => ({
       name: "",
@@ -53,6 +57,7 @@ const TeamRegistrationForm = () => {
   const [email, setEmail] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false)
   const [created, setCreate] = useState<boolean>(false)
+  const [notCreated, setNotCreated] = useState<boolean>(false)
   const handleChange = (
     index: number,
     field: string,
@@ -77,17 +82,22 @@ const TeamRegistrationForm = () => {
     };
     console.log("Team Data:", teamData);
     setLoading(true)
-    const response = await fetch('/api/tournaments/create_team',{
+    const response = await fetch(`/api/tournaments/create_team?tournamentId=${tournamentId}`,{
       method : "POST",
       headers : {
         'Content-Type' : "application/json"
       },
       body : JSON.stringify(teamData)
     })
-    setLoading(false)
-    setCreate(true)
-    const res = await response.json()
-    console.log(res)
+    console.log("This is the response : ",response)
+    if(response.status === 200){
+      setLoading(false)
+      setCreate(true)
+    }else{
+      setLoading(false)
+      setNotCreated(true)
+    }
+        
   };
   if(loading){
     return(
@@ -106,7 +116,23 @@ const TeamRegistrationForm = () => {
               <CheckCircle2 className="h-10 w-10 text-green-600 mx-auto" />
               <h2 className="text-xl font-semibold text-green-700">TEAM CREATED SUCCESSFULLY</h2>
               <p className="text-gray-600">Now you can create next teams</p>
-              <Link href="/tournaments/myTeam">
+              <Link href={`/tournaments/dashboard/tournament_teams?tournamentId=${tournamentId}`}>
+              <Button className="mt-4 cursor-pointer">Teams</Button>
+              </Link>
+        </CardContent>
+      </Card>
+    </div>
+    )
+  }
+  if (notCreated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <Card className="w-full max-w-md shadow-md border border-gray-200">
+        <CardContent className="py-8 text-center space-y-4">
+              <CheckCircle2 className="h-10 w-10 text-red-600 mx-auto" />
+              <h2 className="text-xl font-semibold text-red-700">SOMETHING WENT WRONG</h2>
+              <p className="text-gray-600">Team is not created successfully</p>
+              <Link href="/tournaments/dashboard/my_tournaments">
               <Button className="mt-4 cursor-pointer">Go to Dashboard</Button>
               </Link>
         </CardContent>
@@ -115,22 +141,22 @@ const TeamRegistrationForm = () => {
     )
   }
   return (
-    <div className="p-6 bg-gradient-to-b from-white to-sky-50 min-h-screen">
+    <div className="md:p-6 mb-12 bg-gradient-to-b from-white to-sky-50 min-h-screen">
       <h1 className="text-4xl font-extrabold mb-8 text-center text-sky-700 drop-shadow-sm">
         🏏 Team Registration
       </h1>
-      <div className="border-4 rounded-xl mt-2 border-rose-300 grid grid-cols-2 gap-4 mb-4 p-6">
+      <div className="md:border-4 rounded-xl mt-2 border-rose-300 grid grid-cols-2 gap-4 mb-4 p-6">
             <Input value={teamName} onChange={(e)=>setTeamName(e.target.value)} placeholder="TEAM NAME" type="text"/>
             <Input value={owner} onChange={(e)=>setOwner(e.target.value)} placeholder="OWNER NAME" type="text" />
             <Input value={contact} onChange={(e)=>setContact(e.target.value)} placeholder="CONTACT NUMBER" type="text"/>
             <Input value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="OWNER EMAIL" type="text"/>          
         </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">        
+      <div className="grid grid-cols-1 md:grid-cols-2 mx-0 gap-6">        
         {players.map((player, index) => (
           <motion.div
             key={index}
             whileHover={{ scale: 1.02 }}
-            className={`rounded-xl shadow-md p-4 transition ${playerColors[index % playerColors.length]}`}
+            className={`md:rounded-xl mx-0 w-full shadow-md md:p-4 transition ${playerColors[index % playerColors.length]}`}
           >
             <Card className="p-4">
               <CardContent>

@@ -15,14 +15,14 @@ const Sidebar = () => {
     { label: "Create Tournament", icon: "/trophy.png", href: "/tournaments/dashboard/my_tournaments" },
         { href: "/tournaments/dashboard/add", icon: "/add.png", label: "CREATE" },
     // { label: "Team Requests", icon: "/magic-wand.png", href: "/tournaments/dashboard/ai" },
-    { label: "Leaderboard", icon: "/edit.png", href: "/tournaments/dashboard/edit" },
+    { label: "Leaderboard", icon: "/edit.png", href: "/tournaments/dashboard/my_teams" },
     { label: "Settings", icon: "/settings.png", href: "/tournaments/dashboard/setting" },
    ],[])
   const links = useMemo(() => [
     { href: "/tournaments", icon: "/house.png", label: "Analysis" },
     { label: "Create Tournament", icon: "/trophy.png", href: "/tournaments/dashboard/my_tournaments" },
     { href: "/tournaments/dashboard/add", icon: "/add.png", label: "CREATE" },
-    { label: "Leaderboard", icon: "/edit.png", href: "/tournaments/dashboard/edit" },
+    { label: "Leaderboard", icon: "/edit.png", href: "/tournaments/dashboard/my_teams" },
     { href: "/dashboard/setting", icon: "/settings.png", label: "Setting" },
   ], []);
 

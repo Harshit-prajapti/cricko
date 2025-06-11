@@ -1,15 +1,10 @@
-'use client'
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { Badge } from '@/components/ui/badge';
+import React from 'react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge, MapPin,User,CalendarDays,Phone } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { CalendarDays, MapPin, Phone, Router, User } from "lucide-react"
-import { Card, CardContent, } from '@/components/ui/card';
-import { CrossIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-// import { useRouter } from 'next/router';
 import Link from 'next/link';
-interface tournament{
+interface Tournaments{
   _id : string
   name: string,
   description: string,
@@ -29,60 +24,10 @@ interface tournament{
   teams : number,
   resgistrationDate : Date,
 }
-const page = () => {
-  // const router = useRouter();
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [NotFound,setNotFound] = useState<boolean>(false)
-    const [tournaments, setTournaments] = useState<tournament[]>([])
-    const fetchTournaments = async () => {
-      setLoading(true)
-        const data  = await fetch('/api/tournaments/myTournament',{
-          method : "GET"
-        })
-        console.log(data)
-        if(data.status!== 200) {
-          console.log( "This is the Response " , data)
-          setLoading(false)
-          setNotFound(true)         
-        }
-        if(data.ok){
-          const res = await data.json()
-          console.log("This is the response : ",res)
-          setLoading(false)
-          setTournaments(res.tournaments)
-          setError(null) 
-        }
-    }
-    useEffect(()=>{
-        fetchTournaments()
-    },[])
-    if(loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
-      </div>
-        )
-    }
-    if(NotFound){
-      return(
-        <div className="min-h-screen flex items-center mb-10 justify-center bg-gray-100 px-4">
-      <Card className="w-full max-w-md shadow-md border border-gray-200">
-        <CardContent className="py-8 text-center space-y-4">
-              <CrossIcon className="h-10 w-10 text-red-600 mx-auto" />
-              <h2 className="text-xl font-semibold text-red-700">No Tournament Found</h2>
-              <p className="text-gray-600">Please Create a Tournament first</p>
-              <Link href="/tournaments/dashboard/add">
-              <Button className="mt-4 cursor-pointer">CREATE</Button>
-              </Link>
-        </CardContent>
-      </Card>
-    </div>
-      )      
-    }
-    return (
-      <div className='mb-10'> 
-        {tournaments.map((tournament, index) => (
+const Tournaments = ({tournaments} : {tournaments : Tournaments[]}) => {
+  return (
+    <div className='mb-10'> 
+        {tournaments && tournaments.map((tournament, index) => (
           <div key={index} className="max-w-5xl mx-auto md:p-10 mb-5">
       <div className="bg-white shadow-md rounded border border-gray-200 p-6 md:p-10">
         {/* Header */}
@@ -131,9 +76,7 @@ const page = () => {
     </div>
   ))}
 </div>
-     
   )
-
 }
 function InfoItem({
   icon,
@@ -154,4 +97,4 @@ function InfoItem({
     </div>
   )
 }
-export default page
+export default Tournaments

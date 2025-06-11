@@ -58,7 +58,7 @@ const Carousel = () => {
           })}
         </div>
       </div>
-      <Link href={`/tournaments/create?sport=${images[index].name}`}>
+      <Link href={`/tournaments/dashboard/create?sport=${images[index].name}`}>
       <Button className='mt-5 cursor-pointer hover:bg-amber-700'>{images[index].name.toUpperCase()}</Button>
       </Link>
       

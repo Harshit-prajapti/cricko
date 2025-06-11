@@ -8,5 +8,5 @@ export async function GET(){
         return NextResponse.json("User not found")
     }
     console.log(user)
-    return NextResponse.json("user found successfully",{status : 200})
+    return NextResponse.json(user,{status : 200})
 }

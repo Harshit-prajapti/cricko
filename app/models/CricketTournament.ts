@@ -4,7 +4,7 @@ export interface CricketTournament extends Document {
     name: string;
     city : string;
     venue: string;
-    completeTeam : [ObjectId]
+    pendingTeams : [ObjectId];
     fees: number;
     over: number;
     ballType: string;
@@ -65,8 +65,9 @@ const CricketTournamentSchema: Schema<CricketTournament> = new Schema({
         type : Number,
         required : true,
     },
-    completeTeam : {
-        type : [mongoose.Schema.Types.ObjectId]
+    pendingTeams : {
+        type : [mongoose.Schema.Types.ObjectId],
+        default: []
     },
     startDate: {
         type: Date,

@@ -1,7 +1,8 @@
-// app/tournaments/dashboard/teams/page.tsx (example location)
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { User, Star, Crown, RotateCcw } from "lucide-react";
+import { getServerSession } from "next-auth";
+import authOptions from "@/app/api/auth/[...nextauth]/options";
 interface Player {
   name: string;
   role: string;
@@ -28,13 +29,14 @@ interface Props {
   };
 }
 
-export default async function Teams({ searchParams }: Props) {
-  const tournamentId = await searchParams.tournamentId;
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/tournaments/tournament_teams?tournamentId=${tournamentId}`, {
+export default async function Teams() {
+    const session = await getServerSession(authOptions);
+    console.log("Session in my teams page: ", session?.user);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/tournaments/my_teams?userId=${session?.user.id}`, {
     cache: "no-store", // prevent caching
+    method: "GET",
+    credentials: "include", // include cookies for session
   });
-
   if (!res.ok) {
     return (
       <div className="h-screen flex justify-center items-center px-4">
@@ -47,11 +49,8 @@ export default async function Teams({ searchParams }: Props) {
       </div>
     );
   }
-
   const data = await res.json();
   const teams: Teams[] = data.teams;
-  const totalTeam: number = data.totalTeams;
-
   if (teams.length === 0) {
     return (
       <div className="h-screen flex justify-center items-center px-4">
@@ -59,9 +58,6 @@ export default async function Teams({ searchParams }: Props) {
           <CardContent className="space-y-4 text-center">
             <h2 className="text-xl font-semibold text-red-600">No Teams Found</h2>
             <p className="text-gray-600">You haven't created any teams for this tournament.</p>
-            <Link href={`/tournaments/dashboard/create_team?tournamentId=${tournamentId}`}>
-              <button className="mt-2 bg-blue-600 text-white py-2 px-4 rounded">Create Team</button>
-            </Link>
           </CardContent>
         </Card>
       </div>
@@ -70,11 +66,6 @@ export default async function Teams({ searchParams }: Props) {
 
   return (
     <div className="flex flex-col gap-6 p-4 max-w-full">
-      <div className="md:flex md:flex-row md:justify-between">
-        <h1 className="text-green-600 font-semibold text-2xl">Total Teams In The Tournament: {totalTeam}</h1>
-        <h1 className="text-indigo-700 font-semibold text-2xl">Teams Created Yet: {teams.length}</h1>
-      </div>
-
       {teams.map((team, i) => (
         <Card key={i} className="w-full md:w-4xl mx-auto rounded shadow-lg p-6 bg-white">
           <CardContent className="space-y-4">
@@ -108,28 +99,6 @@ export default async function Teams({ searchParams }: Props) {
           </CardContent>
         </Card>
       ))}
-
-      {totalTeam > teams.length ? (
-        <div className="flex justify-center w-full items-center px-4">
-          <Card className="p-6 max-w-md w-full rounded-xl shadow-lg">
-            <CardContent className="space-y-4 text-center">
-              <h2 className="text-xl font-semibold text-red-600">You Need To Add More Teams In The Tournament</h2>
-              <Link href={`/tournaments/dashboard/create_team?tournamentId=${tournamentId}`}>
-                <button className="mt-2 bg-blue-600 text-white py-2 px-4 rounded">Add Team</button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      ) : (
-        <div className="justify-center w-full items-center px-4">
-          <Card className="p-6 max-w-md w-full rounded-xl shadow-lg">
-            <CardContent className="space-y-4 text-center">
-              <h2 className="text-xl font-semibold text-green-600">All Teams Are Added</h2>
-              <p>Now You Can Close The Registration</p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }

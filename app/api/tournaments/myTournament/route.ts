@@ -5,7 +5,7 @@ import CricketTournamentModel from '@/app/models/CricketTournament';
 export async function GET() {
     const session = await getServerSession(authOptions);
     console.log(session)
-    if (!session) {
+    if (!session) { 
         return NextResponse.json({
             message: 'Unauthorized',
         }, { status: 400 });
